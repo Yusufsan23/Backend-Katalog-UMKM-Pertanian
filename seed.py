@@ -23,7 +23,7 @@ with app.app_context():
     kat_panen = Category.query.filter_by(name="Hasil Panen").first().id
     umkm_id = Umkm.query.first().id
 
-    # 3. Tambah 7 Data Produk (Sesuai screenshot frontend + tambahan)
+    # 3. Tambah 7 Data Produk
     produk_awal = [
         {"name": "Bibit Jagung Manis Super", "price": 75000, "stock": 50, "category_id": kat_bibit},
         {"name": "Pupuk NPK Organik", "price": 120000, "stock": 100, "category_id": kat_pupuk},

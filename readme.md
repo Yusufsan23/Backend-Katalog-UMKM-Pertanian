@@ -9,6 +9,7 @@ Proyek ini dikembangkan untuk memenuhi tugas **Ujian Tengah Semester (UTS) Dasar
 * **Arsitektur:** Layered Architecture (Model, Repository, Route)
 
 ## 📂 Struktur Folder (Layered Architecture)
+```
 katalog-umkm-pertanian/
 │
 ├── app/
@@ -21,6 +22,7 @@ katalog-umkm-pertanian/
 ├── seed.py               # Skrip untuk memasukkan data dummy
 ├── run.py                # File utama server
 └── README.md             # Dokumentasi proyek
+```
 
 ## 🚀 Daftar Endpoint API (v1)
 Seluruh respons dibungkus menggunakan format Response Envelope yang terstandarisasi.

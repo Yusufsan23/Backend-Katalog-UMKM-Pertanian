@@ -4,7 +4,7 @@ from app.models.umkm_models import db, Category, Umkm, Product
 app = create_app()
 
 with app.app_context():
-    # 1. Tambah Data Kategori (Sesuai dropdown di frontend Anda)
+    # 1. Tambah Data Kategori
     kategori_data = ["Pupuk", "Bibit / Benih", "Alat Tani", "Hasil Panen"]
     for nama in kategori_data:
         if not Category.query.filter_by(name=nama).first():

@@ -55,6 +55,3 @@ Seluruh respons dibungkus menggunakan format Response Envelope yang terstandaris
     ```
 6. API dapat diakses di `http://127.0.0.1:5000` menggunakan Postman.
 
-   python run.py
-7. API dapat diakses di `http://127.0.0.1:5000` menggunakan Postman.
-

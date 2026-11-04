@@ -9,11 +9,8 @@ Proyek ini dikembangkan untuk memenuhi tugas **Ujian Tengah Semester (UTS) Dasar
 - **Arsitektur:** Layered Architecture (Model, Repository, Service, Route)
 
 ## 📂 Struktur Folder (Layered Architecture)
-<<<<<<< HEAD
-```text
-=======
+
 ```
->>>>>>> ab2a4beaed3f94e753715c8f37197532c91d643c
 katalog-umkm-pertanian/
 │
 ├── app/

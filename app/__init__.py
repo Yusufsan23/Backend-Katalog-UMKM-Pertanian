@@ -2,6 +2,8 @@ from flask import Flask
 from app.config import Config
 from app.models.umkm_models import db
 from app.routes.product_routes import product_bp_v1
+from app.routes.categories_routes import category_bp_v1
+from app.routes.umkm_routes import umkm_bp_v1
 from app.utils.response_helper import fail_response
 
 def create_app():
@@ -17,6 +19,8 @@ def create_app():
 
     # Mendaftarkan Blueprint Route
     app.register_blueprint(product_bp_v1)
+    app.register_blueprint(category_bp_v1)
+    app.register_blueprint(umkm_bp_v1)
 
     # Global Error Handlers (Opsional namun disarankan)
     @app.errorhandler(404)

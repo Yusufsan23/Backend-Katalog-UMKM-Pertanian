@@ -1,9 +1,12 @@
 from flask import Blueprint, request, jsonify
+from app.models.umkm_models import Category
 from app.repositories.product_repo import ProductRepository
 from app.services.product_service import ProductService
 from app.utils.response_helper import success_response, fail_response
 
 product_bp_v1 = Blueprint("product_v1", __name__, url_prefix="/api/v1/products")
+category_bp_v1 = Blueprint("category_v1", __name__, url_prefix="/api/v1/categories")
+
 
 # Inisialisasi Arsitektur
 repo = ProductRepository()
@@ -29,6 +32,7 @@ def get_products():
             "total_items": pagination.total
         }
     }), 200
+
 
 # 2. CREATE dengan Transaksi Atomik (Pertemuan 7)
 @product_bp_v1.route("/transaction-demo", methods=["POST"])

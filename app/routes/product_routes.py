@@ -15,14 +15,9 @@ service = ProductService(repo)
 # 1. READ dengan Paginasi dan Search Parameter (Pertemuan 3 & 7)
 @product_bp_v1.route("/<int:product_id>", methods=["GET"])
 def get_product_by_id(product_id):
-    # Mencari produk berdasarkan primary key ID di database
     product = Product.query.get(product_id)
-    
-    # Validasi jika ID produk tidak terdaftar di database
     if not product:
         return fail_response({"id": "Produk tidak ditemukan"}, 404)
-        
-    # Mengembalikan data tunggal dalam format Response Envelope
     return success_response(data=product.to_dict(), message="Detail produk berhasil diambil")
 
 @product_bp_v1.route("", methods=["GET"])

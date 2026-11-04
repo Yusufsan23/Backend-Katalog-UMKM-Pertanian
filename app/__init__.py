@@ -1,22 +1,34 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from app.config import Config
+from app.models.umkm_models import db
+from app.routes.product_routes import product_bp_v1
+from app.utils.response_helper import fail_response
 
 def create_app():
     app = Flask(__name__)
-    
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Yu$ufbwi123@localhost/katalog_pertanian_db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
+    app.config.from_object(Config)
+
+    # Inisialisasi Database
     db.init_app(app)
-    
-    # Mendaftarkan model dan membuat tabel otomatis di database
+
+    # Buat tabel otomatis jika belum ada (Bisa dihapus jika mengandalkan seeder)
     with app.app_context():
-        from app.models import umkm_models
         db.create_all()
-        
-        from app.routes.product_routes import product_bp_v1
-        app.register_blueprint(product_bp_v1)
-        
+
+    # Mendaftarkan Blueprint Route
+    app.register_blueprint(product_bp_v1)
+
+    # Global Error Handlers (Opsional namun disarankan)
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return fail_response({"url": "Endpoint API tidak ditemukan."}, 404)
+
+    @app.errorhandler(405)
+    def method_not_allowed(error):
+        return fail_response({"method": "Metode HTTP tidak diizinkan."}, 405)
+
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        return fail_response({"server": "Terjadi kesalahan internal."}, 500)
+
     return app

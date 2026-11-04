@@ -1,54 +1,50 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from app.repositories.product_repo import ProductRepository
+from app.services.product_service import ProductService
 from app.utils.response_helper import success_response, fail_response
 
 product_bp_v1 = Blueprint("product_v1", __name__, url_prefix="/api/v1/products")
-repo = ProductRepository()
 
+# Inisialisasi Arsitektur
+repo = ProductRepository()
+service = ProductService(repo)
+
+# 1. READ dengan Paginasi dan Search Parameter (Pertemuan 3 & 7)
 @product_bp_v1.route("", methods=["GET"])
 def get_products():
-    products = repo.get_all()
-    # Menggunakan to_dict() dari model untuk konversi ke JSON
-    data = [p.to_dict() for p in products] 
-    return success_response(data={"products": data, "total": len(data)})
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 5, type=int)
+    search = request.args.get("search", "", type=str)
 
-@product_bp_v1.route("", methods=["POST"])
-def add_product():
-    body = request.get_json(silent=True)
-    if not body:
-        return fail_response({"body": "Data JSON tidak valid atau kosong"}, 400)
-
-    # Validasi input sederhana
-    if "name" not in body or "price" not in body or "category_id" not in body or "umkm_id" not in body:
-        return fail_response({"error": "name, price, category_id, dan umkm_id wajib diisi"}, 400)
-
-    # Memanggil fungsi create di repository (yang memiliki fitur atomic & rollback)
-    new_product = repo.create(body)
+    pagination = service.get_products(page=page, per_page=per_page, search=search)
     
-    if new_product:
-        return success_response(data=new_product.to_dict(), message="Produk berhasil ditambahkan", code=201)
-    else:
-        return fail_response({"server": "Gagal menyimpan data ke database (Rollback)"}, 500)
-    
-@product_bp_v1.route("/<int:product_id>", methods=["PUT"])
-def update_product(product_id):
-    body = request.get_json(silent=True)
-    if not body:
-        return fail_response({"body": "Data JSON tidak valid atau kosong"}, 400)
+    data = [p.to_dict() for p in pagination.items]
+    return jsonify({
+        "status": "success",
+        "data": data,
+        "pagination": {
+            "current_page": pagination.page,
+            "per_page": pagination.per_page,
+            "total_pages": pagination.pages,
+            "total_items": pagination.total
+        }
+    }), 200
 
-    # Memanggil fungsi update dari repository
-    updated_product = repo.update(product_id, body)
-    
-    if updated_product is None:
-        return fail_response({"id": "Produk tidak ditemukan"}, 404)
-    elif updated_product is False:
-        return fail_response({"server": "Gagal memperbarui data ke database (Rollback)"}, 500)
-    
-    return success_response(data=updated_product.to_dict(), message="Produk berhasil diperbarui")
+# 2. CREATE dengan Transaksi Atomik (Pertemuan 7)
+@product_bp_v1.route("/transaction-demo", methods=["POST"])
+def create_product():
+    data = request.get_json(silent=True)
+    if not data or not data.get("category_name") or not data.get("name") or data.get("price") is None:
+        return fail_response({"error": "category_name, name, dan price wajib diisi"}, 400)
 
+    # Kirim ke Service Layer untuk dicek aturan bisnisnya
+    resp, code = service.add_product_with_category(data)
+    return jsonify(resp), code
+
+# 3. DELETE (Pertemuan 3)
 @product_bp_v1.route("/<int:product_id>", methods=["DELETE"])
 def delete_product(product_id):
-    success = repo.delete(product_id)
+    success = service.delete_product(product_id)
     if success:
         return success_response(message="Produk berhasil dihapus")
     else:

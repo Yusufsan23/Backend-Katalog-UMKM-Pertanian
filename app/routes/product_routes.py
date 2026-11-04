@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.models.umkm_models import Category
+from app.models.umkm_models import Category, Product
 from app.repositories.product_repo import ProductRepository
 from app.services.product_service import ProductService
 from app.utils.response_helper import success_response, fail_response
@@ -13,6 +13,18 @@ repo = ProductRepository()
 service = ProductService(repo)
 
 # 1. READ dengan Paginasi dan Search Parameter (Pertemuan 3 & 7)
+@product_bp_v1.route("/<int:product_id>", methods=["GET"])
+def get_product_by_id(product_id):
+    # Mencari produk berdasarkan primary key ID di database
+    product = Product.query.get(product_id)
+    
+    # Validasi jika ID produk tidak terdaftar di database
+    if not product:
+        return fail_response({"id": "Produk tidak ditemukan"}, 404)
+        
+    # Mengembalikan data tunggal dalam format Response Envelope
+    return success_response(data=product.to_dict(), message="Detail produk berhasil diambil")
+
 @product_bp_v1.route("", methods=["GET"])
 def get_products():
     page = request.args.get("page", 1, type=int)

@@ -1,6 +1,8 @@
 # Sistem Katalog Produk UMKM Pertanian (Backend API)
 
-Proyek ini dikembangkan untuk memenuhi tugas **Ujian Tengah Semester (UTS) Dasar Pemrograman Backend** di STIKOM PGRI Banyuwangi. Aplikasi ini merupakan RESTful API yang mengelola data produk-produk pertanian UMKM dengan menerapkan arsitektur modular, *Layered Architecture*, integrasi ORM SQLAlchemy, serta manajemen transaksi atomik (ACID).
+Proyek ini dikembangkan untuk memenuhi tugas **Ujian Tengah Semester (UTS) Dasar Pemrograman Backend** di STIKOM PGRI Banyuwangi. Aplikasi ini merupakan RESTful API yang mengelola data produk, kategori, dan profil UMKM di sektor pertanian dengan menerapkan arsitektur modular (*Layered Architecture*), integrasi ORM SQLAlchemy, serta manajemen transaksi atomik (ACID).
+
+---
 
 ## 🛠️ Teknologi yang Digunakan
 * **Framework:** Python Flask
@@ -8,18 +10,20 @@ Proyek ini dikembangkan untuk memenuhi tugas **Ujian Tengah Semester (UTS) Dasar
 * **ORM:** Flask-SQLAlchemy & PyMySQL
 * **Arsitektur:** Layered Architecture (Models, Repositories, Services, Routes, Utils)
 
+---
+
 ## 📂 Struktur Folder (Layered Architecture)
 ```text
 katalog-umkm-pertanian/
 │
 ├── app/
-│   ├── __init__.py       # Application Factory & Registrasi Blueprint
-│   ├── config.py         # Konfigurasi Database & Environment
 │   ├── models/           # Skema tabel database (Categories, Umkms, Products)
 │   ├── repositories/     # Logika Akses Data & Database Query (.paginate, .ilike)
-│   ├── routes/           # Endpoint Controller RESTful API
+│   ├── routes/           # Endpoint RESTful API (Product, Category, UMKM)
 │   ├── services/         # Logika Bisnis & Transaksi Atomik (Rollback ACID)
-│   └── utils/            # Helper format response JSON (JSend)
+│   ├── utils/            # Helper format response JSON (JSend / Response Envelope)
+│   ├── config.py         # Konfigurasi Database & Environment
+│   └── __init__.py       # Application Factory & Registrasi Blueprint
 │
 ├── katalog_pertanian.sql # File ekspor/dump database MySQL
 ├── seed.py               # Skrip untuk memasukkan data dummy awal
@@ -27,15 +31,40 @@ katalog-umkm-pertanian/
 └── README.md             # Dokumentasi proyek
 ```
 
-## 🚀 Daftar Endpoint API (v1)
-Seluruh respons API dibungkus menggunakan format *Response Envelope* yang terstandarisasi.
+---
 
-| Method | Endpoint | Deskripsi |
+## 🚀 Daftar Endpoint API (v1)
+Seluruh respons API dibungkus menggunakan format *Response Envelope* yang terstandarisasi (`status`, `message`, `data`/`errors`).
+
+### 1. Produk (Products)
+| Method | Endpoint URI & Parameter | Deskripsi |
 | :--- | :--- | :--- |
-| **GET** | `/api/v1/products` | Mengambil seluruh data produk dengan fitur Paginasi (`?page=1&per_page=5`) & Search (`?search=...`) |
-| **POST** | `/api/v1/products/transaction-demo` | Menambah kategori dan produk baru secara bersamaan melalui Transaksi Atomik (Multi-Tabel) |
+| **GET** | `/api/v1/products` | Menampilkan seluruh data produk |
+| **GET** | `/api/v1/products?page=1&per_page=5&search=...` | Mengambil data produk dengan Paginasi & Search |
+| **GET** | `/api/v1/products/<id>` | Menampilkan detail produk berdasarkan ID |
+| **POST** | `/api/v1/products/transaction-demo` | Menambah kategori & produk baru secara bersamaan (Transaksi Atomik / Rollback) |
 | **PUT** | `/api/v1/products/<id>` | Memperbarui data produk berdasarkan ID |
 | **DELETE**| `/api/v1/products/<id>` | Menghapus data produk berdasarkan ID |
+
+### 2. Kategori (Categories)
+| Method | Endpoint URI & Parameter | Deskripsi |
+| :--- | :--- | :--- |
+| **GET** | `/api/v1/categories` | Menampilkan seluruh data kategori produk |
+| **GET** | `/api/v1/categories/<id>` | Menampilkan detail kategori berdasarkan ID |
+| **POST** | `/api/v1/categories` | Menambah data kategori baru |
+| **PUT** | `/api/v1/categories/<id>` | Memperbarui nama kategori berdasarkan ID |
+| **DELETE**| `/api/v1/categories/<id>` | Menghapus kategori berdasarkan ID |
+
+### 3. UMKM (UMKMs)
+| Method | Endpoint URI & Parameter | Deskripsi |
+| :--- | :--- | :--- |
+| **GET** | `/api/v1/umkms` | Menampilkan seluruh data UMKM pertanian |
+| **GET** | `/api/v1/umkms/<id>` | Menampilkan detail UMKM berdasarkan ID |
+| **POST** | `/api/v1/umkms` | Menambah profil UMKM baru |
+| **PUT** | `/api/v1/umkms/<id>` | Memperbarui data UMKM berdasarkan ID |
+| **DELETE**| `/api/v1/umkms/<id>` | Menghapus data UMKM berdasarkan ID |
+
+---
 
 ## ⚙️ Cara Menjalankan Aplikasi Lokal
 1. Pastikan Python dan MySQL (XAMPP/DBeaver) sudah terpasang dan berjalan.

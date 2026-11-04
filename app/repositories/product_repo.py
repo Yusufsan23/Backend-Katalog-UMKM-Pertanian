@@ -26,3 +26,20 @@ class ProductRepository:
         except Exception as e:
             db.session.rollback()
             return False
+    
+    def update(self, product_id, data):
+        try:
+            product = self.get_by_id(product_id)
+            if not product:
+                return False
+            
+            # Ubah atribut jika dikirim oleh klien
+            product.name = data.get("name", product.name)
+            product.price = data.get("price", product.price)
+            product.stock = data.get("stock", product.stock)
+            
+            db.session.commit() # Simpan permanen perubahan
+            return True
+        except Exception as e:
+            db.session.rollback() # Batalkan jika gagal
+            return False

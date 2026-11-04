@@ -41,6 +41,16 @@ def create_product():
     resp, code = service.add_product_with_category(data)
     return jsonify(resp), code
 
+@product_bp_v1.route("/<int:product_id>", methods=["PUT"])
+def update_product(product_id):
+    # Logika penanganan update data
+    data = request.get_json(silent=True)
+    if not data:
+        return fail_response({"error": "Data tidak valid"}, 400)
+
+    resp, code = service.update_product(product_id, data)
+    return jsonify(resp), code
+
 # 3. DELETE (Pertemuan 3)
 @product_bp_v1.route("/<int:product_id>", methods=["DELETE"])
 def delete_product(product_id):

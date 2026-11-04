@@ -40,3 +40,20 @@ class ProductService:
         except Exception as e:
             db.session.rollback()
             return {"status": "error", "message": f"Transaksi dibatalkan (Rollback): {str(e)}"}, 500
+    
+    def update_product(self, product_id, data):
+        # Validasi bisnis opsional (misal harga baru tidak boleh <= 0 jika dikirim)
+        if "price" in data and data["price"] <= 0:
+            return {"status": "fail", "errors": {"price": "Harga baru harus lebih besar dari 0"}}, 400
+
+        # Panggil repository untuk eksekusi update ke database
+        success = self.repo.update(product_id, data)
+        if not success:
+            return {"status": "fail", "errors": {"id": "Produk tidak ditemukan"}}, 404
+
+        updated_product = self.repo.get_by_id(product_id)
+        return {
+            "status": "success", 
+            "message": "Produk berhasil diperbarui", 
+            "data": updated_product.to_dict()
+        }, 200

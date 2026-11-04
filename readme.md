@@ -49,12 +49,12 @@ Seluruh respons dibungkus menggunakan format Response Envelope yang terstandaris
     python seed.py
     ```
 5. Jalankan server Flask:
-<<<<<<< HEAD
+
     ```bash
     python run.py
     ```
 6. API dapat diakses di `http://127.0.0.1:5000` menggunakan Postman.
-=======
+
    python run.py
-6. API dapat diakses di `http://127.0.0.1:5000` menggunakan Postman.
->>>>>>> ab2a4beaed3f94e753715c8f37197532c91d643c
+7. API dapat diakses di `http://127.0.0.1:5000` menggunakan Postman.
+
